@@ -3,32 +3,33 @@
 [参考]
 https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
 
+## gitの環境を作成する。
 1. githubでリポジトリーを作成する。
 　　このとき、１READMEを作成するにチェックをする。
 　　→クローンがしやすくなる。
 2. githubでブランチを作成する。
 
 3. 作成したブランチを選択して、git cloneする。
-    ・-bでブランチを選択する。
-    ・URLは、githubのリポジトリのcodeから取ってくる。
+    - -bでブランチを選択する。
+    - URLは、githubのリポジトリのcodeから取ってくる。
     　  一応、認証tokenを使うといいかもしれない。
         →ここで、確認できる。　https://github.com/settings/tokens/
-    ・cloneするとフォルダ内に.gitもできるので便利。ブランチは勝手にdevelopL1になる。
-    例) git clone -b developL1 https://<token>@github.com/nasu149/rails-tutorial3.git
+    - cloneするとフォルダ内に.gitもできるので便利。ブランチは勝手にdevelopL1になる。
+        例) git clone -b developL1 https://<token>@github.com/nasu149/rails-tutorial3.git
 
 4. pushしてみる。
-    ・cd でまずはcloneしたディレクトリに移動する。
-    ・add、commitする。
+    - cd でまずはcloneしたディレクトリに移動する。
+    - add、commitする。
         git add -A
         git commit
         →commitは-mつけないと自動でメッセージをかくエディタが起動する。
-    ・pushする前に、tokenを変更しないとできないかも。
+    - pushする前に、tokenを変更しないとできないかも。
       https://github.com/settings/tokens/
       上に行って、regenerateしてtokenを発行する。
       その後、urlをセットする。
         git remote set-url origin https://<token>@github.com/nasu149/rails-tutorial3.git
       これでoriginにtokenつきのURLが設定された。
-    ・あとはpushする。
+    - あとはpushする。
         git push origin developL1:developL1
         →ローカルブランチdevelopL1からリモートブランチdevelopL1にpushする。
         -uオプションを付けると次からはgit pushだけでできるようになる。
@@ -40,7 +41,7 @@ https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
     docker for desktopを起動する。
 
 2. Dockerfileを作成する。
-    ====
+    '''
     FROM ruby:2.6.10
     #ENV RAILS_ENV=production
     RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
@@ -52,10 +53,10 @@ https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
     COPY start.sh /start.sh
     RUN chmod 744 /start.sh
     CMD ["sh", "/start.sh"]
-    ====
+    '''
 
 3. docker-compose.ymlを作成する。
-    ===
+    '''
     version: '3'
 
     services:
@@ -85,10 +86,10 @@ https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
             stdin_open: true
     volumes:
     gem_data:
-    ===
+    '''
 
 4. start.shを作成
-    ===
+    '''
     #!/bin/sh
 
     if [ "${RAILS_ENV}" = "production" ]
@@ -96,33 +97,33 @@ https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
         bundle exec rails assets:precompile
     fi
     bundle exec rails s -p ${PORT:-3000} -b 0.0.0.0
-    ===
+    '''
 
 5. srcディレクトリを作成して、Gemfileだけ入れておく。
-    mkdir src
-    cd src
-    touch Gemfile
-    cd ..
+    - mkdir src
+    - cd src
+    - touch Gemfile
+    - cd ..
 
-    ==Gemfileの内容
+    '''Gemfileの内容
     source 'https://rubygems.org'
     ruby '2.6.10'
     gem 'rails', '~> 5.2.8', '>= 5.2.8.1'
-    ===
+    '''
 
 6. コンテナをrunして、railsをnewする。
-    ===
+    '''
     docker-compose run web rails new . --force --database=mysql
-    ===
+    '''
 
 7. gitignoreの場所を変更する。
-    mv ./src/.gitignore .
-    で、すべてディレクトリが変わるので、頭にsrcをつける。
+    - mv ./src/.gitignore .
+    - で、すべてディレクトリが変わるので、頭にsrcをつける。
 
 8. 新しくできたsrcの中の.gitを消す。
-    cd src 
-    rm -rf .git
-    cd ..
+    - cd src 
+    - rm -rf .git
+    - cd ..
 
 9. src/config/database.ymlの内容を変更する。
         password: password
