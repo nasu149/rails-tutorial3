@@ -20,3 +20,13 @@
         git add -A
         git commit
         →commitは-mつけないと自動でメッセージをかくエディタが起動する。
+    ・pushする前に、tokenを変更しないとできないかも。
+      https://github.com/settings/tokens/
+      上に行って、regenerateしてtokenを発行する。
+      その後、urlをセットする。
+        git remote set-url origin https://<token>@github.com/nasu149/rails-tutorial3.git
+      これでoriginにtokenつきのURLが設定された。
+    ・あとはpushする。
+        git push origin developL1:developL1
+        →ローカルブランチdevelopL1からリモートブランチdevelopL1にpushする。
+        -uオプションを付けると次からはgit pushだけでできるようになる。
