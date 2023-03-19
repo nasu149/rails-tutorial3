@@ -1,6 +1,8 @@
 # rails-tutorial3
 
-##  gitの初期設定手順書
+[参考]
+https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
+
 1. githubでリポジトリーを作成する。
 　　このとき、１READMEを作成するにチェックをする。
 　　→クローンがしやすくなる。
@@ -109,3 +111,28 @@
     ===
 
 6. コンテナをrunして、railsをnewする。
+    ===
+    docker-compose run web rails new . --force --database=mysql
+    ===
+
+7. gitignoreの場所を変更する。
+    mv ./src/.gitignore .
+    で、すべてディレクトリが変わるので、頭にsrcをつける。
+
+8. 新しくできたsrcの中の.gitを消す。
+    cd src 
+    rm -rf .git
+    cd ..
+
+9. src/config/database.ymlの内容を変更する。
+        password: password
+        host: db
+        →passwordを設定して、hostをdbにする。
+
+10. dbを使えるようにする。
+    docker-compose run web rails db:create
+
+11. コンテナを起動する。
+    docker-compose up
+
+    http://localhost:3000 にアクセスする。
