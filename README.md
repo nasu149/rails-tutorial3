@@ -41,7 +41,7 @@ https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
     docker for desktopを起動する。
 
 2. Dockerfileを作成する。
-    '''
+    ```docker: Dockerfile
     FROM ruby:2.6.10
     #ENV RAILS_ENV=production
     RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
@@ -53,10 +53,10 @@ https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
     COPY start.sh /start.sh
     RUN chmod 744 /start.sh
     CMD ["sh", "/start.sh"]
-    '''
+    ```
 
 3. docker-compose.ymlを作成する。
-    '''
+    ```docker docker-compose.yaml
     version: '3'
 
     services:
@@ -86,10 +86,10 @@ https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
             stdin_open: true
     volumes:
     gem_data:
-    '''
+    ```
 
 4. start.shを作成
-    '''
+    ```shell: start.sh
     #!/bin/sh
 
     if [ "${RAILS_ENV}" = "production" ]
@@ -97,7 +97,7 @@ https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
         bundle exec rails assets:precompile
     fi
     bundle exec rails s -p ${PORT:-3000} -b 0.0.0.0
-    '''
+    ```
 
 5. srcディレクトリを作成して、Gemfileだけ入れておく。
     - mkdir src
@@ -105,16 +105,16 @@ https://www.youtube.com/watch?v=lZD1MIHwMBY&list=LL&index=4&t=4803s
     - touch Gemfile
     - cd ..
 
-    '''Gemfileの内容
+    ```ruby: Gemfile
     source 'https://rubygems.org'
     ruby '2.6.10'
     gem 'rails', '~> 5.2.8', '>= 5.2.8.1'
-    '''
+    ```
 
 6. コンテナをrunして、railsをnewする。
-    '''
+    ```cmd: new
     docker-compose run web rails new . --force --database=mysql
-    '''
+    ```
 
 7. gitignoreの場所を変更する。
     - mv ./src/.gitignore .
