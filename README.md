@@ -1,6 +1,6 @@
 # rails-tutorial3
 
-[gitの初期設定手順書]
+##  gitの初期設定手順書
 1. githubでリポジトリーを作成する。
 　　このとき、１READMEを作成するにチェックをする。
 　　→クローンがしやすくなる。
@@ -30,3 +30,82 @@
         git push origin developL1:developL1
         →ローカルブランチdevelopL1からリモートブランチdevelopL1にpushする。
         -uオプションを付けると次からはgit pushだけでできるようになる。
+
+
+## dockerでrails環境の作成方法
+
+1. dockerを起動する。
+    docker for desktopを起動する。
+
+2. Dockerfileを作成する。
+    ====
+    FROM ruby:2.6.10
+    #ENV RAILS_ENV=production
+    RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
+    RUN mkdir /myapp
+    WORKDIR /myapp
+    COPY ./src /myapp
+    RUN bundle config --local set path 'vendor/bundle'
+    RUN bundle install
+    COPY start.sh /start.sh
+    RUN chmod 744 /start.sh
+    CMD ["sh", "/start.sh"]
+    ====
+
+3. docker-compose.ymlを作成する。
+    ===
+    version: '3'
+
+    services:
+        db:
+            image: mysql:5.7
+            environment:
+                MYSQL_USER: 
+                MYSQL_ROOT_PASSWORD: password
+                MYSQL_PASSWORD: password
+                MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+            ports:
+                - "3306:3306"
+            volumes:
+                - ./src/db/mysql/volumes:/var/lib/mysql
+
+        web:
+            build: .
+            command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+            volumes:
+                - ./src:/myapp
+                # - gem_data:/usr/local/bundle
+            ports:
+                - 3000:3000
+            depends_on:
+                - db 
+            tty: true
+            stdin_open: true
+    volumes:
+    gem_data:
+    ===
+
+4. start.shを作成
+    ===
+    #!/bin/sh
+
+    if [ "${RAILS_ENV}" = "production" ]
+    then
+        bundle exec rails assets:precompile
+    fi
+    bundle exec rails s -p ${PORT:-3000} -b 0.0.0.0
+    ===
+
+5. srcディレクトリを作成して、Gemfileだけ入れておく。
+    mkdir src
+    cd src
+    touch Gemfile
+    cd ..
+
+    ==Gemfileの内容
+    source 'https://rubygems.org'
+    ruby '2.6.10'
+    gem 'rails', '~> 5.2.8', '>= 5.2.8.1'
+    ===
+
+6. コンテナをrunして、railsをnewする。
